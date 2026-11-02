@@ -15,6 +15,16 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
+# Adaptively handle full-width button/widget arguments across Streamlit versions
+def _resolve_full_width():
+    import inspect
+    sig = inspect.signature(st.button)
+    if "width" in sig.parameters:
+        return {"width": "stretch"}
+    return {"use_container_width": True}
+
+ST_FULL_WIDTH = _resolve_full_width()
+
 # Load environment variables
 try:
     from dotenv import load_dotenv
@@ -822,17 +832,17 @@ st.markdown('<div class="section-title">📝 Step 1: Incident Narrative Input & 
 col_ctrl1, col_ctrl2, col_ctrl3 = st.columns([1.8, 1.8, 1.4])
 
 with col_ctrl1:
-    if st.button("📋 Load Pune College Scenario (English)", use_container_width=True):
+    if st.button("📋 Load Pune College Scenario (English)", **ST_FULL_WIDTH):
         st.session_state["narrative_input"] = FICTIONAL_PUNE_SCENARIO_EN
         st.session_state["selected_lang"] = "English"
 
 with col_ctrl2:
-    if st.button("🚩 Load Pune College Scenario (मराठी)", use_container_width=True):
+    if st.button("🚩 Load Pune College Scenario (मराठी)", **ST_FULL_WIDTH):
         st.session_state["narrative_input"] = FICTIONAL_PUNE_SCENARIO_MR
         st.session_state["selected_lang"] = "Marathi (मराठी)"
 
 with col_ctrl3:
-    if st.button("🗑️ Clear Form", use_container_width=True):
+    if st.button("🗑️ Clear Form", **ST_FULL_WIDTH):
         st.session_state["narrative_input"] = ""
         st.session_state["processed_data"] = None
 
@@ -874,7 +884,7 @@ narrative_text = st.text_area(
     placeholder="Example: Yesterday evening around 7:30 PM, I was near the main gate of a college in Pune. I saw a person wearing a dark jacket arguing with a delivery rider..."
 )
 
-generate_clicked = st.button("🚀 Analyze Incident & Generate Draft FIR", type="primary", use_container_width=True)
+generate_clicked = st.button("🚀 Analyze Incident & Generate Draft FIR", type="primary", **ST_FULL_WIDTH)
 st.markdown('</div>', unsafe_allow_html=True)
 
 # -----------------------------------------------------------------------------
@@ -1046,7 +1056,7 @@ if report_data:
                 })
             
             df_timeline = pd.DataFrame(timeline_rows)
-            st.dataframe(df_timeline, use_container_width=True, hide_index=True)
+            st.dataframe(df_timeline, hide_index=True, **ST_FULL_WIDTH)
 
             st.markdown("#### Sequential Event Cards & Source Provenance:")
             for idx, ev in enumerate(events, start=1):
@@ -1416,7 +1426,7 @@ if report_data:
             data=formatted_fir_text,
             file_name=f"SakshyaAI_Official_FIR_Sec154_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt",
             mime="text/plain",
-            use_container_width=True
+            **ST_FULL_WIDTH
         )
     with exp_col2:
         st.download_button(
@@ -1424,7 +1434,7 @@ if report_data:
             data=formatted_incident_text,
             file_name=f"SakshyaAI_Incident_Report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt",
             mime="text/plain",
-            use_container_width=True
+            **ST_FULL_WIDTH
         )
     with exp_col3:
         st.download_button(
@@ -1432,7 +1442,7 @@ if report_data:
             data=formatted_full_json,
             file_name=f"SakshyaAI_Full_Incident_FIR_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json",
             mime="application/json",
-            use_container_width=True
+            **ST_FULL_WIDTH
         )
 
     st.markdown('</div>', unsafe_allow_html=True)
