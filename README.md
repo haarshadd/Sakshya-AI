@@ -1,23 +1,23 @@
-# ⚖️ CaseScribe — Multilingual Incident Documentation & Automated FIR Assistant
+# ⚖️ Sakshya AI (साक्ष्य AI) — Multilingual Crime Incident Documentation & Automated FIR Drafting Assistant
 
 > **MIT-WPU Pune • 45-Minute AI Hackathon MVP**  
-> *"From spoken account to structured legal incident report & Section 154 Cr.P.C. Draft FIR."*
+> *"From spoken account to structured legal evidence & Section 154 Cr.P.C. Draft FIR."*
 
-CaseScribe is an objective, multilingual incident documentation and legal aid assistant engineered for legal aid clinics, police station digital intake kiosks, community support groups, and preliminary investigative teams. It empowers victims and witnesses who are more comfortable speaking Marathi, Hindi, or other Indian languages to provide preliminary statements and transforms raw, unstructured accounts into structured, chronological incident reports and **authentic Draft First Information Reports (FIRs)** based on crime severity assessment.
+**Sakshya AI (साक्ष्य AI)** is an objective, multilingual incident documentation and legal aid assistant engineered for legal aid clinics, police station digital intake kiosks, community support groups, and preliminary investigative teams. It empowers victims and witnesses who are more comfortable speaking Marathi, Hindi, or other Indian languages to provide preliminary statements and transforms raw, unstructured accounts into structured, chronological incident reports and **authentic Draft First Information Reports (FIRs)** based on crime severity assessment.
 
 ---
 
 ## 🎯 1. Product Vision & Problem Statement
 
 * **The Problem:** Documenting incidents under distress is challenging. Citizens in India often articulate details more naturally in Marathi or Hindi than in formal legal English. Critical sequence data, timestamps, and witness positions are frequently lost or distorted. Furthermore, identifying whether an incident constitutes a **Cognizable Offence** requiring an immediate FIR under Section 154 Cr.P.C. / Section 173 BNSS often creates friction for victims at police duty desks.
-* **The Solution:** CaseScribe transcribes spoken or written statements, organizes information into structured chronological events, assesses crime severity, identifies tentative IPC and BNS 2023 sections, and generates an authentic **14-point Draft First Information Report (FIR)** matching the standard National Crime Records Bureau (CCTNS) police form.
-* **Responsible Boundary:** CaseScribe is a *documentation assistant*, **not** an autonomous law enforcement system. It organizes statements, highlights gaps, and generates drafts without determining guilt or assessing witness credibility.
+* **The Solution:** Sakshya AI transcribes spoken or written statements, organizes information into structured chronological events, assesses crime severity, identifies tentative IPC and BNS 2023 sections, and generates an authentic **14-point Draft First Information Report (FIR)** matching the standard National Crime Records Bureau (CCTNS) police form.
+* **Responsible Boundary:** Sakshya AI is a *documentation assistant*, **not** an autonomous law enforcement system. It organizes statements, highlights gaps, and generates drafts without determining guilt or assessing witness credibility.
 
 ---
 
-## 🚨 2. Core New Feature: Automated FIR Drafting & Crime Severity Assessment
+## 🚨 2. Core Feature: Automated FIR Drafting & Crime Severity Assessment
 
-Based on the witness's narrative, CaseScribe performs automated statutory evaluation:
+Based on the witness's narrative, Sakshya AI performs automated statutory evaluation:
 
 1. **Crime Severity Evaluation:**
    - **High Severity (Cognizable):** Physical violence, assault, grievous hurt, robbery, hit-and-run, sexual harassment. Triggers mandatory FIR recommendation as per *Lalita Kumari v. Govt of UP*.
@@ -32,14 +32,14 @@ Based on the witness's narrative, CaseScribe performs automated statutory evalua
    - Formal Acts & Sections Grid with R/W Section details.
    - Occurrence of Offence & General Diary (GD) reference.
    - Place of Occurrence (Beat No., distance & direction from PS).
-   - Complainant / Informant particulars.
+   - Complainant / Informant particulars (with interactive editor).
    - Accused particulars (distinguishing reported descriptions from unobserved details).
    - First Information Contents (formal, legally sound statement of facts).
    - Action Taken & Investigating Officer (IO) direction.
 
 ---
 
-## 🚀 3. Additional Core Features
+## 🚀 3. Additional Capabilities
 
 1. **Multilingual Narrative Input:**
    - Supports native English, Marathi (मराठी), and Hindi (हिन्दी).
@@ -64,10 +64,10 @@ Based on the witness's narrative, CaseScribe performs automated statutory evalua
 
 ## 🛡️ 4. Responsible AI Safeguards
 
-CaseScribe displays a persistent disclaimer:
-> *"CaseScribe organizes preliminary witness accounts and generates a Draft First Information Report (FIR) under Section 154 Cr.P.C. / Section 173 BNSS based on prima facie severity evaluation. It does not determine guilt, verify allegations, or replace the statutory authority of a Police Duty Officer / Station House Officer (SHO). All generated documents must be verified and signed by authorized personnel."*
+Sakshya AI displays a persistent disclaimer:
+> *"Sakshya AI organizes preliminary witness accounts and generates a Draft First Information Report (FIR) under Section 154 Cr.P.C. / Section 173 BNSS based on prima facie severity evaluation. It does not determine guilt, verify allegations, or replace the statutory authority of a Police Duty Officer / Station House Officer (SHO). All generated documents must be verified and signed by authorized personnel."*
 
-* **No Speculation:** If the narrator reports not seeing what caused a fall, CaseScribe preserves that uncertainty and never infers a cause.
+* **No Speculation:** If the narrator reports not seeing what caused a fall, Sakshya AI preserves that uncertainty and never infers a cause.
 * **Zero Accusations:** Does not assign suspect status or legal fault.
 * **Provenance Tracking:** Every timeline card references the original verbatim excerpt.
 
@@ -90,17 +90,15 @@ CaseScribe displays a persistent disclaimer:
 - Python 3.10+
 - Sarvam AI API Key (from [dashboard.sarvam.ai](https://dashboard.sarvam.ai))
 
-### Installation
+### Installation & Launch
 ```bash
-# Clone or navigate to the directory
+# Navigate to the project directory
 cd C:\Users\haars\.gemini\antigravity\scratch\sarvam-project
 
 # Install dependencies
 pip install -r requirements.txt
-```
 
-### Launch the Application
-```bash
+# Run the app
 streamlit run app.py
 ```
 
