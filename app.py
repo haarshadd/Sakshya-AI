@@ -42,6 +42,8 @@ def get_sarvam_api_key():
     return None
 
 configured_key = get_sarvam_api_key()
+if configured_key:
+    os.environ["SARVAM_API_KEY"] = configured_key
 
 # -----------------------------------------------------------------------------
 # Fictional Scenarios & Demo Data
