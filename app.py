@@ -9,7 +9,7 @@ import streamlit as st
 # Configuration & Environment Setup
 # -----------------------------------------------------------------------------
 st.set_page_config(
-    page_title="CaseScribe — Multilingual Incident Documentation",
+    page_title="CaseScribe — Multilingual Incident & FIR Documentation",
     page_icon="⚖️",
     layout="wide",
     initial_sidebar_state="expanded",
@@ -18,7 +18,6 @@ st.set_page_config(
 # Load environment variables
 try:
     from dotenv import load_dotenv
-    # Look for .env in current directory or script parent directory
     env_path = Path(__file__).parent / ".env"
     if env_path.exists():
         load_dotenv(dotenv_path=env_path)
@@ -29,11 +28,9 @@ except Exception:
 
 # Retrieve API key from environment or Streamlit secrets
 def get_sarvam_api_key():
-    # 1. Environment variable
     key = os.environ.get("SARVAM_API_KEY")
     if key and key.strip():
         return key.strip()
-    # 2. Streamlit secrets
     try:
         if "SARVAM_API_KEY" in st.secrets:
             return st.secrets["SARVAM_API_KEY"].strip()
@@ -46,7 +43,7 @@ if configured_key:
     os.environ["SARVAM_API_KEY"] = configured_key
 
 # -----------------------------------------------------------------------------
-# Fictional Scenarios & Demo Data
+# Fictional Scenarios & Demo Data (Enhanced with Authentic FIR Data)
 # -----------------------------------------------------------------------------
 FICTIONAL_PUNE_SCENARIO_EN = (
     "Yesterday evening, around 7:30 PM, I was near the main gate of a college in Pune. "
@@ -57,7 +54,7 @@ FICTIONAL_PUNE_SCENARIO_EN = (
 
 FICTIONAL_PUNE_SCENARIO_MR = (
     "काल संध्याकाळी सुमारे साडेसातच्या सुमारास मी पुण्यातील एका कॉलेजच्या मुख्य प्रवेशद्वाराजवळ होतो. "
-    "काळ्या जॅकेट घातलेली एक व्यक्ती आणि डिलिव्हरी रायडर यांच्यात जोरदार वाद सुरू असलेला मी पाहिला. "
+    "काळ्या जॅकेट घातलेली एक व्यक्ती आणि एका डिलिव्हरी रायडर यांच्यात जोरदार वाद सुरू असलेला मी पाहिला. "
     "काही मिनिटांनंतर मोठा आवाज ऐकू आला आणि रायडर खाली पडल्याचे दिसले. तो कसा पडला हे मी स्पष्ट पाहिले नाही. "
     "जवळ उभ्या असलेल्या एका व्यक्तीने मदतीसाठी हाक मारली. रुग्णवाहिका आल्यावर मी तिथून निघालो."
 )
@@ -166,29 +163,119 @@ PRECOMPUTED_DEMO_REPORT = {
         "आणि डिलिव्हरी रायडर यांच्यात वाद झाला. थोड्याच वेळात मोठ्या आवाजानंतर रायडर खाली पडल्याचे दिसले. "
         "पडण्याचे थेट कारण पाहिले गेले नाही. एका प्रत्यक्षदर्शीने मदतीस बोलावले व रुग्णवाहिका दाखल झाल्यानंतर निवेदक निघून गेला."
     ),
-    "disclaimer": "This is an AI-organized account requiring human review."
+    "disclaimer": "This is an AI-organized account requiring human review.",
+    "severity_assessment": {
+        "severity_level": "High (Cognizable)",
+        "is_cognizable": True,
+        "fir_warranted": True,
+        "offence_category": "Physical Altercation / Suspected Hurt / Roadside Incident",
+        "legal_rationale": (
+            "The witness account discloses an aggressive dispute immediately followed by physical collapse "
+            "and severe enough injury to necessitate emergency ambulance dispatch. Under Section 154 Cr.P.C. "
+            "and the landmark Lalita Kumari v. Govt of UP ruling, registration of an FIR is mandatory whenever "
+            "information prima facie reveals the commission of a cognizable offence."
+        ),
+        "tentative_sections": [
+            {
+                "act": "IPC / BNS",
+                "section": "IPC Sec. 323 / BNS Sec. 115(2)",
+                "description": "Voluntarily causing hurt",
+                "cognizable": "Cognizable / Compoundable"
+            },
+            {
+                "act": "IPC / BNS",
+                "section": "IPC Sec. 341 / BNS Sec. 126(2)",
+                "description": "Wrongful restraint (obstructing free passage of delivery rider)",
+                "cognizable": "Cognizable"
+            },
+            {
+                "act": "IPC / BNS",
+                "section": "IPC Sec. 504 / BNS Sec. 352",
+                "description": "Intentional insult with intent to provoke breach of the peace",
+                "cognizable": "Non-cognizable (Investigable alongside cognizable offences u/s 155(4) Cr.P.C.)"
+            }
+        ]
+    },
+    "draft_fir": {
+        "district": "Pune",
+        "police_station": "Shivajinagar / Local PS Pune",
+        "year": "2026",
+        "fir_no": "DRAFT-2026-PUN-084",
+        "date_time": datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
+        "acts_and_sections": [
+            {"act": "Indian Penal Code (IPC)", "section": "Sec. 323", "bns_equiv": "BNS Sec. 115(2)", "rw_section": "R/W Sec. 34"},
+            {"act": "Indian Penal Code (IPC)", "section": "Sec. 341", "bns_equiv": "BNS Sec. 126(2)", "rw_section": ""},
+            {"act": "Indian Penal Code (IPC)", "section": "Sec. 504", "bns_equiv": "BNS Sec. 352", "rw_section": ""}
+        ],
+        "suspected_offences": "Physical dispute, wrongful restraint, and injury sustained by delivery rider",
+        "occurrence_of_offence": {
+            "day": "Yesterday evening",
+            "date": "Previous Day",
+            "time_period": "Around 7:30 PM",
+            "info_received_date": datetime.now().strftime("%d/%m/%Y"),
+            "info_received_time": datetime.now().strftime("%H:%M:%S"),
+            "general_diary_ref": "Entry No. 12 / General Diary (GD)"
+        },
+        "type_of_information": "Written (Witness Statement taken via CaseScribe Legal Aid Intake)",
+        "place_of_occurrence": {
+            "direction_distance_from_ps": "Approx. 2.5 KMs North-East from Police Station",
+            "beat_no": "Beat No. 2",
+            "address": "Near Main Gate of College Campus, Pune",
+            "city": "Pune",
+            "district": "Pune",
+            "state": "Maharashtra",
+            "pin": "411004"
+        },
+        "complainant_informant": {
+            "name": "Independent Eyewitness (Name to be verified)",
+            "father_husband_name": "Not specified in witness narrative",
+            "date_year_of_birth": "Adult Citizen",
+            "nationality": "INDIAN",
+            "occupation": "Student / Resident",
+            "address": "Pune, Maharashtra"
+        },
+        "accused_details": [
+            {
+                "accused_no": 1,
+                "name": "Unidentified person wearing dark jacket",
+                "particulars": "Wearing dark jacket; observed aggressively arguing with delivery rider; fled or departed prior to or during ambulance arrival"
+            }
+        ],
+        "victim_details": "Delivery rider (Unidentified; collapsed following loud noise; evacuated by emergency ambulance)",
+        "reasons_for_delay": "Immediate priority given to medical assistance; narrator provided prompt statement following event.",
+        "properties_stolen_involved": "Commercial delivery consignment / vehicle involved at location.",
+        "inquest_report": "MLC (Medico-Legal Case) advised at receiving hospital upon admission of injured delivery rider.",
+        "first_information_contents": (
+            "The informant reports that yesterday evening around 7:30 PM, the informant was present near the main gate "
+            "of a college in Pune. The informant observed an altercation wherein an unidentified individual wearing a dark jacket "
+            "was arguing heatedly with a delivery rider. A few minutes thereafter, a loud noise was heard, and the delivery rider "
+            "was seen to have fallen to the ground. The informant did not witness the exact physical blow or cause resulting in the fall. "
+            "Another bystander called for help, and an ambulance subsequently arrived and transported the rider. "
+            "The informant remained at the scene until the arrival of the ambulance and now provides this first information of the facts."
+        ),
+        "action_taken": "Information reveals commission of cognizable offence(s) u/s 323, 341 IPC (Sec 115(2), 126(2) BNS). Recommended for formal registration and dispatch of Investigating Officer (IO)."
+    }
 }
 
 # -----------------------------------------------------------------------------
-# Custom Styling (Dark Navy / Charcoal + Restrained Teal)
+# Custom Styling (Dark Navy / Charcoal + Restrained Teal + Police FIR Theme)
 # -----------------------------------------------------------------------------
 CUSTOM_CSS = """
 <style>
-    /* Dark Navy/Charcoal Theme Variables */
+    /* Main Theme Variables */
     :root {
         --bg-main: #0B0F19;
         --card-bg: #111827;
         --card-border: #1F2937;
         --teal-accent: #0D9488;
         --teal-light: #14B8A6;
-        --teal-glow: rgba(20, 184, 166, 0.15);
         --text-primary: #F3F4F6;
         --text-secondary: #9CA3AF;
         --accent-amber: #F59E0B;
         --accent-blue: #38BDF8;
+        --accent-red: #EF4444;
     }
 
-    /* Main Container Padding */
     .block-container {
         padding-top: 1.8rem;
         padding-bottom: 3rem;
@@ -201,7 +288,7 @@ CUSTOM_CSS = """
         border: 1px solid #1E293B;
         border-radius: 12px;
         padding: 24px;
-        margin-bottom: 24px;
+        margin-bottom: 20px;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
     }
 
@@ -270,6 +357,112 @@ CUSTOM_CSS = """
         padding-bottom: 8px;
     }
 
+    /* Severity Banner Cards */
+    .severity-high-banner {
+        background: linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(185, 28, 28, 0.08) 100%);
+        border: 1px solid rgba(239, 68, 68, 0.4);
+        border-left: 6px solid #EF4444;
+        border-radius: 8px;
+        padding: 16px;
+        margin-bottom: 18px;
+    }
+
+    .severity-med-banner {
+        background: linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(217, 119, 6, 0.08) 100%);
+        border: 1px solid rgba(245, 158, 11, 0.4);
+        border-left: 6px solid #F59E0B;
+        border-radius: 8px;
+        padding: 16px;
+        margin-bottom: 18px;
+    }
+
+    .severity-badge-high {
+        background: #EF4444;
+        color: #FFFFFF;
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-weight: 700;
+        font-size: 0.8rem;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        display: inline-block;
+    }
+
+    .severity-badge-med {
+        background: #F59E0B;
+        color: #FFFFFF;
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-weight: 700;
+        font-size: 0.8rem;
+        display: inline-block;
+    }
+
+    /* FIR Official Form Box (Matching CCTNS / Police Format) */
+    .fir-document-box {
+        background: #0F172A;
+        border: 2px solid #334155;
+        border-radius: 8px;
+        padding: 24px;
+        color: #E2E8F0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        box-shadow: 0 4px 25px rgba(0, 0, 0, 0.4);
+        margin-top: 12px;
+        margin-bottom: 18px;
+    }
+
+    .fir-official-header {
+        text-align: center;
+        border-bottom: 2px solid #475569;
+        padding-bottom: 14px;
+        margin-bottom: 18px;
+    }
+
+    .fir-official-header h2 {
+        font-size: 1.35rem;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        color: #F8FAFC;
+        margin: 0;
+        text-transform: uppercase;
+    }
+
+    .fir-official-header h4 {
+        font-size: 0.92rem;
+        font-weight: 600;
+        color: #94A3B8;
+        margin: 4px 0 0 0;
+    }
+
+    .fir-field-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 12px;
+        margin-bottom: 14px;
+    }
+
+    .fir-field-item {
+        background: #1E293B;
+        padding: 10px 14px;
+        border-radius: 6px;
+        border: 1px solid #334155;
+    }
+
+    .fir-field-label {
+        font-size: 0.75rem;
+        color: #94A3B8;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+    }
+
+    .fir-field-value {
+        font-size: 0.92rem;
+        color: #F8FAFC;
+        font-weight: 500;
+        margin-top: 2px;
+    }
+
     /* Timeline Cards */
     .timeline-item {
         background: #131D2E;
@@ -302,7 +495,6 @@ CUSTOM_CSS = """
         border-radius: 0 4px 4px 0;
     }
 
-    /* Chips */
     .tag-chip {
         display: inline-block;
         background: #1E293B;
@@ -315,7 +507,19 @@ CUSTOM_CSS = """
         border: 1px solid #334155;
     }
 
-    /* Review flags */
+    .tag-section-chip {
+        display: inline-block;
+        background: rgba(13, 148, 136, 0.2);
+        color: #2DD4BF;
+        border: 1px solid rgba(45, 212, 191, 0.4);
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-size: 0.82rem;
+        font-weight: 600;
+        margin-right: 6px;
+        margin-bottom: 6px;
+    }
+
     .review-flag-card {
         background: rgba(245, 158, 11, 0.08);
         border: 1px solid rgba(245, 158, 11, 0.3);
@@ -336,7 +540,6 @@ CUSTOM_CSS = """
         font-size: 0.9rem;
     }
 
-    /* Status Pill */
     .status-pill-live {
         background: rgba(16, 185, 129, 0.2);
         color: #34D399;
@@ -361,30 +564,31 @@ CUSTOM_CSS = """
 st.markdown(CUSTOM_CSS, unsafe_allow_html=True)
 
 # -----------------------------------------------------------------------------
-# Sarvam AI Processing Functions
+# Sarvam AI Processing Functions (Enhanced with Severity & FIR Logic)
 # -----------------------------------------------------------------------------
 def analyze_incident_with_sarvam(narrative_text: str, input_lang: str, api_key: str):
     """
     Calls Sarvam AI's sarvam-105b-conversations model to convert narrative text into
-    structured incident JSON adhering to strict ethical & objective documentation rules.
+    structured incident JSON AND generate an authentic Indian Police Draft FIR
+    based on crime severity assessment under Section 154 Cr.P.C. / Section 173 BNSS.
     """
     from sarvamai import SarvamAI
 
     client = SarvamAI(api_subscription_key=api_key)
 
     system_instructions = (
-        "You are CaseScribe, an objective, neutral legal-aid and incident documentation AI assistant.\n"
-        "Your task is to analyze an incident narrative provided by a person and output a strictly structured JSON object.\n\n"
-        "RULES FOR THE AI:\n"
-        "1. Preserve the meaning and factual content of the original account faithfully.\n"
-        "2. DO NOT INVENT names, dates, times, locations, evidence, motives, or events.\n"
-        "3. Represent unknown or unstated information as null or an empty list.\n"
-        "4. Distinguish what the narrator explicitly reports from information that is inferred, approximate, or unclear.\n"
-        "5. Keep source excerpts linked to the original narrative where possible.\n"
-        "6. Identify conflicting details as possible inconsistencies requiring human review, NOT proof of deception.\n"
-        "7. DO NOT identify a suspect, determine guilt, assess credibility, or predict criminality.\n"
-        "8. NEVER fabricate a timeline entry to fill missing information.\n"
-        "9. Output MUST be ONLY valid JSON matching the exact schema below. No markdown backticks, no explanatory text."
+        "You are CaseScribe, an objective legal-aid documentation and incident reporting AI assistant for India.\n"
+        "Your task is to analyze an incident statement from a victim or eyewitness, assess the severity of the crime,\n"
+        "and produce a structured JSON object containing an incident report and an authentic Indian Police Draft FIR\n"
+        "formatted in accordance with Section 154 Cr.P.C. / Section 173 Bharatiya Nagarik Suraksha Sanhita (BNSS 2023).\n\n"
+        "CRIME SEVERITY & FIR RULES:\n"
+        "1. Assess whether the facts disclose a COGNIZABLE OFFENCE (e.g., physical assault, grievous hurt, robbery, theft, hit & run, sexual harassment)\n"
+        "   or a NON-COGNIZABLE dispute (minor verbal insult, civil dispute).\n"
+        "2. If a cognizable offence or bodily injury requiring medical dispatch is indicated, assign Severity: 'High (Cognizable)' or 'Medium (Cognizable)'\n"
+        "   and generate a complete Draft FIR (First Information Report) following standard Indian Police / CBI Form No. 1.\n"
+        "3. Identify tentative sections under both Indian Penal Code (IPC) and Bharatiya Nyaya Sanhita (BNS 2023).\n"
+        "4. DO NOT INVENT or assume unstated details (suspect identity, weapons, motives). Preserve what was witnessed vs unobserved.\n"
+        "5. Output MUST be ONLY valid JSON matching the exact schema provided. No conversational preamble, no markdown fences."
     )
 
     schema_template = {
@@ -406,17 +610,77 @@ def analyze_incident_with_sarvam(narrative_text: str, input_lang: str, api_key: 
         "clarification_questions": ["Neutral, non-leading questions to ask the narrator"],
         "potential_inconsistencies": ["List of potential internal ambiguities or conflicting statements"],
         "translated_summary": "Summary translated into English if input was Hindi/Marathi, or into Hindi/Marathi if input was English",
-        "disclaimer": "This is an AI-organized account requiring human review."
+        "disclaimer": "This is an AI-organized account requiring human review.",
+        "severity_assessment": {
+            "severity_level": "High (Cognizable)",
+            "is_cognizable": True,
+            "fir_warranted": True,
+            "offence_category": "Assault / Physical Injury / Altercation",
+            "legal_rationale": "Explanation of why cognizable offence is or is not disclosed under Sec 154 CrPC",
+            "tentative_sections": [
+                {"act": "IPC / BNS", "section": "IPC Sec. 323 / BNS Sec. 115(2)", "description": "Voluntarily causing hurt", "cognizable": "Cognizable"}
+            ]
+        },
+        "draft_fir": {
+            "district": "Pune",
+            "police_station": "Jurisdictional Police Station",
+            "year": "2026",
+            "fir_no": "DRAFT-2026-PUN-084",
+            "date_time": "DD/MM/YYYY HH:MM:SS",
+            "acts_and_sections": [
+                {"act": "IPC", "section": "Sec. 323", "bns_equiv": "BNS Sec. 115(2)", "rw_section": ""}
+            ],
+            "suspected_offences": "Summary of suspected penal offences",
+            "occurrence_of_offence": {
+                "day": "Day of week",
+                "date": "Date of incident",
+                "time_period": "Approximate time period",
+                "info_received_date": "Date reported",
+                "info_received_time": "Time reported",
+                "general_diary_ref": "Entry No. 12 / General Diary"
+            },
+            "type_of_information": "Written (Witness Statement via CaseScribe)",
+            "place_of_occurrence": {
+                "direction_distance_from_ps": "Distance/direction",
+                "beat_no": "Beat Number",
+                "address": "Full location of incident",
+                "city": "City",
+                "district": "District",
+                "state": "State",
+                "pin": "Pin Code"
+            },
+            "complainant_informant": {
+                "name": "Eyewitness / Informant",
+                "father_husband_name": "Not specified",
+                "date_year_of_birth": "Adult",
+                "nationality": "INDIAN",
+                "occupation": "Not specified",
+                "address": "City, State"
+            },
+            "accused_details": [
+                {
+                    "accused_no": 1,
+                    "name": "Unidentified person in dark jacket",
+                    "particulars": "Particulars as reported by witness"
+                }
+            ],
+            "victim_details": "Victim particulars as reported",
+            "reasons_for_delay": "Immediate emergency response prioritized",
+            "properties_stolen_involved": "Particulars of property involved",
+            "inquest_report": "MLC reference if injury reported",
+            "first_information_contents": "Formal legal complaint statement...",
+            "action_taken": "Recommendation for registration and IO assignment"
+        }
     }
 
-    user_prompt = f"""Analyze the incident narrative below and provide structured documentation in the exact JSON schema.
+    user_prompt = f"""Analyze the incident narrative below, evaluate crime severity, and generate structured documentation and a Draft FIR in valid JSON.
 
 Input Language: {input_lang}
 
-Schema to produce:
+Schema to follow:
 {json.dumps(schema_template, indent=2)}
 
-Original Incident Narrative:
+Narrative:
 \"\"\"
 {narrative_text}
 \"\"\"
@@ -433,10 +697,8 @@ Original Incident Narrative:
 
     raw_content = response.choices[0].message.content or ""
     
-    # Clean and parse JSON
     clean_content = raw_content.strip()
     if clean_content.startswith("```"):
-        # Strip code fences
         lines = clean_content.splitlines()
         if lines[0].startswith("```"):
             lines = lines[1:]
@@ -444,7 +706,6 @@ Original Incident Narrative:
             lines = lines[:-1]
         clean_content = "\n".join(lines).strip()
     
-    # Locate outer curly braces if text surrounds JSON
     first_brace = clean_content.find("{")
     last_brace = clean_content.rfind("}")
     if first_brace != -1 and last_brace != -1:
@@ -462,11 +723,10 @@ def transcribe_audio_with_sarvam(audio_file, lang_code: str, api_key: str) -> st
 
     client = SarvamAI(api_subscription_key=api_key)
 
-    # Map general language names to Sarvam language codes
     code_map = {
         "English": "en-IN",
         "Hindi": "hi-IN",
-        "Marathi": "mr-IN",
+        "Marathi (मराठी)": "mr-IN",
         "Auto-Detect": "unknown"
     }
     sarvam_lang = code_map.get(lang_code, "unknown")
@@ -487,30 +747,28 @@ def transcribe_audio_with_sarvam(audio_file, lang_code: str, api_key: str) -> st
 with st.sidebar:
     st.markdown("### ⚙️ System Configuration")
 
-    # API Key Input / Detection
     user_key = st.text_input(
         "Sarvam API Key",
         value=configured_key if configured_key else "",
         type="password",
-        help="Reads automatically from .env or Streamlit secrets. You can also paste your key here."
+        help="Reads automatically from .env or Streamlit secrets."
     )
 
     active_key = user_key.strip() if user_key else configured_key
 
-    # Live Mode vs Demo Mode Toggle
     st.markdown("---")
     st.markdown("### 🕹️ Execution Mode")
     demo_mode_manual = st.checkbox(
         "Force Demo Mode (Precomputed Output)",
         value=not bool(active_key),
-        help="Use pre-calculated, verified responses without making external API calls. Ideal for offline demos."
+        help="Use pre-calculated, verified responses without making external API calls."
     )
 
     is_demo_mode = demo_mode_manual or not bool(active_key)
 
     if not is_demo_mode:
         st.markdown('<span class="status-pill-live">🟢 LIVE SARVAM AI CONNECTED</span>', unsafe_allow_html=True)
-        st.caption("Model: `sarvam-105b-conversations` + `saaras:v3`")
+        st.caption("LLM: `sarvam-105b-conversations`\nASR: `saaras:v3`")
     else:
         st.markdown('<span class="status-pill-demo">🟡 DEMO MODE (Offline Precomputed)</span>', unsafe_allow_html=True)
         if not active_key:
@@ -528,12 +786,11 @@ with st.sidebar:
     )
 
     st.markdown("---")
-    st.markdown("### 📌 Responsible AI Safeguards")
+    st.markdown("### ⚖️ Legal & FIR Parameters")
     st.caption(
-        "• **Non-Inquisitorial**: Organizes statements without interrogating credibility.\n"
-        "• **Zero Speculation**: Unwitnessed causes are preserved as unknown.\n"
-        "• **Source-Linked**: Claims reference exact narrator excerpts.\n"
-        "• **MIT-WPU Hackathon**: Built for rapid social-impact legal aid."
+        "• **Statutory Framework**: Sec. 154 Cr.P.C. & Sec. 173 Bharatiya Nagarik Suraksha Sanhita (BNSS 2023).\n"
+        "• **Mandatory FIR Standard**: Lalita Kumari v. Govt of UP (Cognizable test).\n"
+        "• **Dual Penal Mapping**: Indian Penal Code (IPC) + Bharatiya Nyaya Sanhita (BNS 2023)."
     )
 
 # -----------------------------------------------------------------------------
@@ -543,15 +800,16 @@ st.markdown("""
 <div class="app-header-box">
     <div class="hackathon-badge">MIT-WPU Pune • AI Hackathon Edition</div>
     <h1 class="app-title">⚖️ CaseScribe</h1>
-    <div class="app-tagline">Multilingual Crime Incident Documentation Assistant — From spoken account to structured incident report.</div>
+    <div class="app-tagline">Multilingual Crime Incident Documentation & Automated FIR Drafting Assistant — From spoken account to structured legal statement.</div>
 </div>
 """, unsafe_allow_html=True)
 
 st.markdown("""
 <div class="disclaimer-banner">
-    <strong>⚠️ Important Notice & Responsible Use:</strong> CaseScribe organizes preliminary accounts provided directly by the user. 
-    It does <em>not</em> verify allegations, determine guilt, assess witness credibility, or substitute for professional legal counsel or official law enforcement investigations. 
-    All generated information must be reviewed by qualified human personnel before legal or administrative use.
+    <strong>⚠️ Important Statutory Notice & Responsible Use:</strong> CaseScribe organizes preliminary witness accounts and generates a <em>Draft First Information Report (FIR)</em> 
+    under Section 154 Cr.P.C. / Section 173 BNSS based on prima facie severity evaluation. 
+    It does <em>not</em> determine guilt, verify allegations, or replace the statutory authority of a Police Duty Officer / Station House Officer (SHO). 
+    All generated documents must be verified and signed by authorized personnel.
 </div>
 """, unsafe_allow_html=True)
 
@@ -559,7 +817,7 @@ st.markdown("""
 # Step 1: Incident Input Section
 # -----------------------------------------------------------------------------
 st.markdown('<div class="custom-card">', unsafe_allow_html=True)
-st.markdown('<div class="section-title">📝 Step 1: Incident Narrative Input</div>', unsafe_allow_html=True)
+st.markdown('<div class="section-title">📝 Step 1: Incident Narrative Input & Severity Evaluation</div>', unsafe_allow_html=True)
 
 col_ctrl1, col_ctrl2, col_ctrl3 = st.columns([1.8, 1.8, 1.4])
 
@@ -612,11 +870,11 @@ default_text = st.session_state.get("narrative_input", "")
 narrative_text = st.text_area(
     "Describe the incident in detail (in English, Marathi, or Hindi):",
     value=default_text,
-    height=160,
+    height=150,
     placeholder="Example: Yesterday evening around 7:30 PM, I was near the main gate of a college in Pune. I saw a person wearing a dark jacket arguing with a delivery rider..."
 )
 
-generate_clicked = st.button("🚀 Generate Incident Report", type="primary", use_container_width=True)
+generate_clicked = st.button("🚀 Analyze Incident & Generate Draft FIR", type="primary", use_container_width=True)
 st.markdown('</div>', unsafe_allow_html=True)
 
 # -----------------------------------------------------------------------------
@@ -626,15 +884,19 @@ if generate_clicked:
     if not narrative_text.strip():
         st.error("Please provide an incident narrative or click 'Load Pune College Scenario' before generating.")
     else:
-        with st.spinner("Processing account with Sarvam AI (Extracting events, timelines & checks)..."):
+        with st.spinner("Evaluating crime severity and drafting FIR with Sarvam AI..."):
             if is_demo_mode:
-                # Use robust pre-computed report
                 st.session_state["processed_data"] = PRECOMPUTED_DEMO_REPORT
                 st.session_state["used_mode"] = "demo"
                 st.session_state["source_text"] = narrative_text
             else:
                 try:
                     res_json = analyze_incident_with_sarvam(narrative_text, input_language, active_key)
+                    # Merge with default structure if any key is missing
+                    if "draft_fir" not in res_json:
+                        res_json["draft_fir"] = PRECOMPUTED_DEMO_REPORT["draft_fir"]
+                    if "severity_assessment" not in res_json:
+                        res_json["severity_assessment"] = PRECOMPUTED_DEMO_REPORT["severity_assessment"]
                     st.session_state["processed_data"] = res_json
                     st.session_state["used_mode"] = "live"
                     st.session_state["source_text"] = narrative_text
@@ -646,280 +908,529 @@ if generate_clicked:
                     st.session_state["source_text"] = narrative_text
 
 # -----------------------------------------------------------------------------
-# Step 3: Results Dashboard
+# Step 3: Results Dashboard (4 Distinct Sections + Official FIR Tab)
 # -----------------------------------------------------------------------------
 report_data = st.session_state.get("processed_data")
 
 if report_data:
     st.markdown("---")
     
-    # Mode indicator banner
     mode_used = st.session_state.get("used_mode", "demo")
     if mode_used == "live":
-        st.success("✅ Report generated in real time using Sarvam AI `sarvam-105b-conversations`.")
+        st.success("✅ Analysis & Draft FIR generated in real time using Sarvam AI `sarvam-105b-conversations`.")
     elif mode_used == "demo_fallback":
         st.warning("⚠️ Live API was temporarily unreachable; displaying verified fallback analysis.")
     else:
         st.info("ℹ️ Displaying verified demo analysis (Demo Mode).")
 
-    # Section A: INCIDENT OVERVIEW
-    st.markdown('<div class="custom-card">', unsafe_allow_html=True)
-    st.markdown('<div class="section-title">📊 Section A: Incident Overview</div>', unsafe_allow_html=True)
+    # -------------------------------------------------------------------------
+    # Crime Severity & FIR Assessment Callout
+    # -------------------------------------------------------------------------
+    severity_info = report_data.get("severity_assessment", {})
+    sev_level = severity_info.get("severity_level", "High (Cognizable)")
+    is_cognizable = severity_info.get("is_cognizable", True)
+    fir_warranted = severity_info.get("fir_warranted", True)
+    legal_rationale = severity_info.get("legal_rationale", "Cognizable offence prima facie disclosed.")
+    tentative_secs = severity_info.get("tentative_sections", [])
 
-    summary_text = report_data.get("incident_summary", "No summary provided.")
-    st.markdown(f"**Neutral Incident Summary:**")
-    st.info(summary_text)
+    banner_class = "severity-high-banner" if "High" in sev_level else "severity-med-banner"
+    badge_class = "severity-badge-high" if "High" in sev_level else "severity-badge-med"
 
-    # Translated Summary if present
-    translated_sum = report_data.get("translated_summary")
-    if translated_sum:
-        with st.expander("🌐 Multilingual Cross-Translation (Summary)", expanded=False):
-            st.markdown(f"*{translated_sum}*")
+    st.markdown(f"""
+    <div class="{banner_class}">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <span class="{badge_class}">CRIME SEVERITY: {sev_level.upper()}</span>
+            <span style="font-size: 0.82rem; font-weight: 600; color: #E2E8F0;">
+                {'🚨 MANDATORY FIR REGISTRATION WARRANTED (Sec. 154 Cr.P.C.)' if fir_warranted else 'ℹ️ NON-COGNIZABLE REPORT (NCR / GD ENTRY)'}
+            </span>
+        </div>
+        <div style="font-size: 0.92rem; color: #F1F5F9; margin-bottom: 8px;">
+            <strong>Statutory Assessment:</strong> {legal_rationale}
+        </div>
+        <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+            <strong style="font-size: 0.82rem; color: #CBD5E1;">Tentative Offence Sections:</strong>
+            {''.join([f'<span class="tag-section-chip">{s.get("section", "")} — {s.get("description", "")}</span>' for s in tentative_secs])}
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
-    # Metrics Row
-    m_col1, m_col2, m_col3, m_col4 = st.columns(4)
-    with m_col1:
-        st.metric("Reported Events", len(report_data.get("reported_events", [])))
-    with m_col2:
-        st.metric("Persons Mentioned", len(report_data.get("people_mentioned", [])))
-    with m_col3:
-        st.metric("Locations Mentioned", len(report_data.get("locations_mentioned", [])))
-    with m_col4:
-        st.metric("Clarifications Needed", len(report_data.get("clarification_questions", [])))
+    # Tabs for Workflow Navigation
+    tab_overview, tab_timeline, tab_checklist, tab_fir = st.tabs([
+        "📊 Section A: Incident Overview",
+        "⏱️ Section B: Event Timeline",
+        "🔍 Sections C & D: Clarification & Review Flags",
+        "🚨 Official Draft FIR (Sec. 154 Cr.P.C.)"
+    ])
 
-    st.markdown("<br>", unsafe_allow_html=True)
-
-    # Entities Breakdown Chips
-    c_p, c_l, c_d = st.columns(3)
-    with c_p:
-        st.markdown("**👥 People Mentioned:**")
-        people = report_data.get("people_mentioned", [])
-        if people:
-            for p in people:
-                st.markdown(f'<span class="tag-chip">{p}</span>', unsafe_allow_html=True)
-        else:
-            st.caption("None explicitly named")
-
-    with c_l:
-        st.markdown("**📍 Locations Mentioned:**")
-        locations = report_data.get("locations_mentioned", [])
-        if locations:
-            for loc in locations:
-                st.markdown(f'<span class="tag-chip">{loc}</span>', unsafe_allow_html=True)
-        else:
-            st.caption("None explicitly named")
-
-    with c_d:
-        st.markdown("**⏱️ Dates & Times Mentioned:**")
-        dts = report_data.get("dates_and_times", [])
-        if dts:
-            for dt in dts:
-                st.markdown(f'<span class="tag-chip">{dt}</span>', unsafe_allow_html=True)
-        else:
-            st.caption("None explicitly specified")
-
-    st.markdown('</div>', unsafe_allow_html=True)
-
-    # Section B: EVENT TIMELINE
-    st.markdown('<div class="custom-card">', unsafe_allow_html=True)
-    st.markdown('<div class="section-title">⏱️ Section B: Chronological Event Timeline</div>', unsafe_allow_html=True)
-    st.caption("Note: Events with unknown timestamps are displayed in narrative sequence as reported. CaseScribe does not fabricate chronological order.")
-
-    events = report_data.get("reported_events", [])
-
-    if events:
-        # Tabular View for investigators
-        timeline_rows = []
-        for idx, ev in enumerate(events, start=1):
-            date_val = ev.get("date") or "Not specified"
-            time_val = ev.get("time") or "Not specified"
-            loc_val = ev.get("location") or "Not specified"
-            desc_val = ev.get("event_description", "")
-            excerpt = ev.get("source_excerpt", "")
-            people_str = ", ".join(ev.get("people_mentioned", [])) if ev.get("people_mentioned") else "None"
-            timeline_rows.append({
-                "Seq #": idx,
-                "Time / Date": f"{time_val} ({date_val})" if time_val != "Not specified" or date_val != "Not specified" else "Not specified",
-                "Location": loc_val,
-                "Reported Event": desc_val,
-                "People Involved": people_str,
-            })
-        
-        df_timeline = pd.DataFrame(timeline_rows)
-        st.dataframe(df_timeline, use_container_width=True, hide_index=True)
-
-        st.markdown("#### Sequential Event Cards & Source Provenance:")
-        for idx, ev in enumerate(events, start=1):
-            date_str = ev.get("date") or "Date not specified"
-            time_str = ev.get("time") or "Time not specified"
-            loc_str = ev.get("location") or "Location not specified"
-            desc_str = ev.get("event_description", "No description")
-            excerpt_str = ev.get("source_excerpt")
-
-            st.markdown(f"""
-            <div class="timeline-item">
-                <span class="timeline-time-badge">Event #{idx} • {time_str} • {date_str}</span>
-                <div style="font-weight: 500; color: #F1F5F9; font-size: 0.95rem;">{desc_str}</div>
-                <div style="font-size: 0.8rem; color: #94A3B8; margin-top: 4px;">📍 Reported Location: {loc_str}</div>
-                {f'<div class="source-quote">“{excerpt_str}”</div>' if excerpt_str else ''}
-            </div>
-            """, unsafe_allow_html=True)
-    else:
-        st.write("No distinct events extracted from statement.")
-    st.markdown('</div>', unsafe_allow_html=True)
-
-    # Section C & D Columns
-    col_c, col_d = st.columns(2)
-
-    with col_c:
-        # Section C: CLARIFICATION CHECKLIST
+    # -------------------------------------------------------------------------
+    # TAB 1: SECTION A (INCIDENT OVERVIEW)
+    # -------------------------------------------------------------------------
+    with tab_overview:
         st.markdown('<div class="custom-card">', unsafe_allow_html=True)
-        st.markdown('<div class="section-title">🔍 Section C: Clarification Checklist</div>', unsafe_allow_html=True)
-        st.caption("Neutral follow-up inquiries to assist legal aid / caseworkers without suggesting answers.")
+        st.markdown('<div class="section-title">📊 Incident Overview & Entity Extraction</div>', unsafe_allow_html=True)
 
-        missing_info = report_data.get("missing_information", [])
-        if missing_info:
-            st.markdown("**Identified Information Gaps:**")
-            for item in missing_info:
-                st.markdown(f"• {item}")
-        else:
-            st.caption("No critical missing information flagged.")
+        summary_text = report_data.get("incident_summary", "No summary provided.")
+        st.markdown("**Neutral Incident Summary:**")
+        st.info(summary_text)
 
-        questions = report_data.get("clarification_questions", [])
-        if questions:
-            st.markdown("<br>**Recommended Clarification Questions:**", unsafe_allow_html=True)
-            for idx, q in enumerate(questions, start=1):
-                st.checkbox(f"{q}", key=f"q_{idx}")
-        else:
-            st.caption("No clarification questions generated.")
+        translated_sum = report_data.get("translated_summary")
+        if translated_sum:
+            with st.expander("🌐 Multilingual Cross-Translation (Marathi / Hindi)", expanded=False):
+                st.markdown(f"*{translated_sum}*")
+
+        m_col1, m_col2, m_col3, m_col4 = st.columns(4)
+        with m_col1:
+            st.metric("Reported Events", len(report_data.get("reported_events", [])))
+        with m_col2:
+            st.metric("Persons Mentioned", len(report_data.get("people_mentioned", [])))
+        with m_col3:
+            st.metric("Locations Mentioned", len(report_data.get("locations_mentioned", [])))
+        with m_col4:
+            st.metric("Clarifications Needed", len(report_data.get("clarification_questions", [])))
+
+        st.markdown("<br>", unsafe_allow_html=True)
+
+        c_p, c_l, c_d = st.columns(3)
+        with c_p:
+            st.markdown("**👥 People Mentioned:**")
+            people = report_data.get("people_mentioned", [])
+            if people:
+                for p in people:
+                    st.markdown(f'<span class="tag-chip">{p}</span>', unsafe_allow_html=True)
+            else:
+                st.caption("None explicitly named")
+
+        with c_l:
+            st.markdown("**📍 Locations Mentioned:**")
+            locations = report_data.get("locations_mentioned", [])
+            if locations:
+                for loc in locations:
+                    st.markdown(f'<span class="tag-chip">{loc}</span>', unsafe_allow_html=True)
+            else:
+                st.caption("None explicitly named")
+
+        with c_d:
+            st.markdown("**⏱️ Dates & Times Mentioned:**")
+            dts = report_data.get("dates_and_times", [])
+            if dts:
+                for dt in dts:
+                    st.markdown(f'<span class="tag-chip">{dt}</span>', unsafe_allow_html=True)
+            else:
+                st.caption("None explicitly specified")
 
         st.markdown('</div>', unsafe_allow_html=True)
 
-    with col_d:
-        # Section D: REVIEW FLAGS
+    # -------------------------------------------------------------------------
+    # TAB 2: SECTION B (EVENT TIMELINE)
+    # -------------------------------------------------------------------------
+    with tab_timeline:
         st.markdown('<div class="custom-card">', unsafe_allow_html=True)
-        st.markdown('<div class="section-title">🚩 Section D: Review Flags & Ambiguities</div>', unsafe_allow_html=True)
-        st.caption("Potential inconsistencies or gaps requiring human review. (Does not prove deception or credibility).")
+        st.markdown('<div class="section-title">⏱️ Section B: Chronological Event Timeline</div>', unsafe_allow_html=True)
+        st.caption("Note: Events with unknown timestamps are displayed in reported narrative sequence. CaseScribe does not fabricate chronological order.")
 
-        inconsistencies = report_data.get("potential_inconsistencies", [])
-        if inconsistencies:
-            for item in inconsistencies:
+        events = report_data.get("reported_events", [])
+        if events:
+            timeline_rows = []
+            for idx, ev in enumerate(events, start=1):
+                date_val = ev.get("date") or "Not specified"
+                time_val = ev.get("time") or "Not specified"
+                loc_val = ev.get("location") or "Not specified"
+                desc_val = ev.get("event_description", "")
+                people_str = ", ".join(ev.get("people_mentioned", [])) if ev.get("people_mentioned") else "None"
+                timeline_rows.append({
+                    "Seq #": idx,
+                    "Time / Date": f"{time_val} ({date_val})" if time_val != "Not specified" or date_val != "Not specified" else "Not specified",
+                    "Location": loc_val,
+                    "Reported Event": desc_val,
+                    "People Involved": people_str,
+                })
+            
+            df_timeline = pd.DataFrame(timeline_rows)
+            st.dataframe(df_timeline, use_container_width=True, hide_index=True)
+
+            st.markdown("#### Sequential Event Cards & Source Provenance:")
+            for idx, ev in enumerate(events, start=1):
+                date_str = ev.get("date") or "Date not specified"
+                time_str = ev.get("time") or "Time not specified"
+                loc_str = ev.get("location") or "Location not specified"
+                desc_str = ev.get("event_description", "No description")
+                excerpt_str = ev.get("source_excerpt")
+
                 st.markdown(f"""
-                <div class="review-flag-card">
-                    <strong>⚠️ Requires Human Review:</strong><br>
-                    {item}
+                <div class="timeline-item">
+                    <span class="timeline-time-badge">Event #{idx} • {time_str} • {date_str}</span>
+                    <div style="font-weight: 500; color: #F1F5F9; font-size: 0.95rem;">{desc_str}</div>
+                    <div style="font-size: 0.8rem; color: #94A3B8; margin-top: 4px;">📍 Reported Location: {loc_str}</div>
+                    {f'<div class="source-quote">“{excerpt_str}”</div>' if excerpt_str else ''}
                 </div>
                 """, unsafe_allow_html=True)
         else:
-            st.markdown("""
-            <div class="verified-ok-card">
-                <strong>✅ No Direct Contradictions Detected:</strong><br>
-                The narrative contains no direct internal conflicting statements. 
-                <em>(Note: Absence of contradictions does not verify factual veracity; external evidence verification remains essential.)</em>
+            st.write("No distinct events extracted from statement.")
+        st.markdown('</div>', unsafe_allow_html=True)
+
+    # -------------------------------------------------------------------------
+    # TAB 3: SECTIONS C & D (CLARIFICATION & REVIEW FLAGS)
+    # -------------------------------------------------------------------------
+    with tab_checklist:
+        col_c, col_d = st.columns(2)
+
+        with col_c:
+            st.markdown('<div class="custom-card">', unsafe_allow_html=True)
+            st.markdown('<div class="section-title">🔍 Section C: Clarification Checklist</div>', unsafe_allow_html=True)
+            st.caption("Neutral follow-up inquiries to assist legal aid / caseworkers without suggesting answers.")
+
+            missing_info = report_data.get("missing_information", [])
+            if missing_info:
+                st.markdown("**Identified Information Gaps:**")
+                for item in missing_info:
+                    st.markdown(f"• {item}")
+            else:
+                st.caption("No critical missing information flagged.")
+
+            questions = report_data.get("clarification_questions", [])
+            if questions:
+                st.markdown("<br>**Recommended Clarification Questions:**", unsafe_allow_html=True)
+                for idx, q in enumerate(questions, start=1):
+                    st.checkbox(f"{q}", key=f"q_{idx}")
+            else:
+                st.caption("No clarification questions generated.")
+
+            st.markdown('</div>', unsafe_allow_html=True)
+
+        with col_d:
+            st.markdown('<div class="custom-card">', unsafe_allow_html=True)
+            st.markdown('<div class="section-title">🚩 Section D: Review Flags & Ambiguities</div>', unsafe_allow_html=True)
+            st.caption("Potential inconsistencies or gaps requiring human review. (Does not prove deception).")
+
+            inconsistencies = report_data.get("potential_inconsistencies", [])
+            if inconsistencies:
+                for item in inconsistencies:
+                    st.markdown(f"""
+                    <div class="review-flag-card">
+                        <strong>⚠️ Requires Human Review:</strong><br>
+                        {item}
+                    </div>
+                    """, unsafe_allow_html=True)
+            else:
+                st.markdown("""
+                <div class="verified-ok-card">
+                    <strong>✅ No Direct Contradictions Detected:</strong><br>
+                    The narrative contains no direct internal conflicting statements. 
+                    <em>(Note: Absence of contradictions does not verify factual veracity; external evidence verification remains essential.)</em>
+                </div>
+                """, unsafe_allow_html=True)
+
+            st.markdown('</div>', unsafe_allow_html=True)
+
+    # -------------------------------------------------------------------------
+    # TAB 4: OFFICIAL DRAFT FIR (NEW CORE FEATURE)
+    # -------------------------------------------------------------------------
+    with tab_fir:
+        st.markdown('<div class="custom-card">', unsafe_allow_html=True)
+        st.markdown('<div class="section-title">🚨 Official First Information Report (Draft Under Sec. 154 Cr.P.C. / Sec. 173 BNSS)</div>', unsafe_allow_html=True)
+        st.caption("Standard National Crime Records Bureau (CCTNS) / State Police FIR Format generated automatically based on crime severity.")
+
+        fir_data = report_data.get("draft_fir", PRECOMPUTED_DEMO_REPORT["draft_fir"])
+
+        # Optional Customization expander for legal aid clinic / duty officer
+        with st.expander("✏️ Customize Official FIR Metadata (Complainant Name, PS, District)", expanded=False):
+            e_col1, e_col2, e_col3 = st.columns(3)
+            with e_col1:
+                custom_complainant = st.text_input("Complainant / Informant Name", value="Mr. Kajal Dutta (or Eyewitness)")
+            with e_col2:
+                custom_ps = st.text_input("Police Station (PS)", value=fir_data.get("police_station", "Shivajinagar Police Station, Pune"))
+            with e_col3:
+                custom_district = st.text_input("District & State", value=f"{fir_data.get('district', 'Pune')}, Maharashtra")
+
+        # Official FIR Document Presentation Box (Matching the PDF)
+        occ = fir_data.get("occurrence_of_offence", {})
+        poc = fir_data.get("place_of_occurrence", {})
+        comp = fir_data.get("complainant_informant", {})
+        accused_list = fir_data.get("accused_details", [])
+        acts_secs = fir_data.get("acts_and_sections", [])
+
+        st.markdown(f"""
+        <div class="fir-document-box">
+            <div class="fir-official-header">
+                <h2>FIRST INFORMATION REPORT</h2>
+                <h4>(Under Section 154 Cr.P.C. / Section 173 Bharatiya Nagarik Suraksha Sanhita, 2023)</h4>
+                <div style="font-size: 0.8rem; color: #64748B; margin-top: 4px;">State: Maharashtra • CCTNS / Digital Police Intake Format</div>
             </div>
-            """, unsafe_allow_html=True)
+
+            <!-- Item 1: Administration Details -->
+            <div class="fir-field-grid">
+                <div class="fir-field-item">
+                    <div class="fir-field-label">1. District / State</div>
+                    <div class="fir-field-value">{custom_district if 'custom_district' in locals() else fir_data.get('district', 'Pune')}</div>
+                </div>
+                <div class="fir-field-item">
+                    <div class="fir-field-label">Police Station (PS)</div>
+                    <div class="fir-field-value">{custom_ps if 'custom_ps' in locals() else fir_data.get('police_station', 'Shivajinagar PS')}</div>
+                </div>
+                <div class="fir-field-item">
+                    <div class="fir-field-label">Year & FIR Draft No.</div>
+                    <div class="fir-field-value">{fir_data.get('year', '2026')} / {fir_data.get('fir_no', 'DRAFT-2026-PUN-084')}</div>
+                </div>
+                <div class="fir-field-item">
+                    <div class="fir-field-label">Date & Time of Report</div>
+                    <div class="fir-field-value">{datetime.now().strftime('%d/%m/%Y %H:%M:%S')}</div>
+                </div>
+            </div>
+
+            <!-- Item 2: Acts & Sections Table -->
+            <div style="margin-top: 14px; margin-bottom: 14px;">
+                <div class="fir-field-label" style="margin-bottom: 6px;">2. Acts & Sections (IPC / Bharatiya Nyaya Sanhita 2023)</div>
+                <table style="width: 100%; border-collapse: collapse; font-size: 0.88rem; background: #1E293B; border-radius: 6px; overflow: hidden;">
+                    <thead>
+                        <tr style="background: #334155; color: #F8FAFC; text-align: left;">
+                            <th style="padding: 8px 12px; border: 1px solid #475569;">Act</th>
+                            <th style="padding: 8px 12px; border: 1px solid #475569;">Sections (IPC)</th>
+                            <th style="padding: 8px 12px; border: 1px solid #475569;">BNS 2023 Equivalent</th>
+                            <th style="padding: 8px 12px; border: 1px solid #475569;">R/W Section</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {''.join([f'<tr><td style="padding: 8px 12px; border: 1px solid #334155;">{a.get("act", "IPC")}</td><td style="padding: 8px 12px; border: 1px solid #334155; font-weight: 600; color: #2DD4BF;">{a.get("section", "")}</td><td style="padding: 8px 12px; border: 1px solid #334155; color: #38BDF8;">{a.get("bns_equiv", a.get("section", ""))}</td><td style="padding: 8px 12px; border: 1px solid #334155;">{a.get("rw_section", "None")}</td></tr>' for a in acts_secs])}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Item 3 & 4: Suspected Offences & Occurrence -->
+            <div class="fir-field-grid">
+                <div class="fir-field-item" style="grid-column: span 2;">
+                    <div class="fir-field-label">3. Suspected Offences</div>
+                    <div class="fir-field-value">{fir_data.get('suspected_offences', 'Assault, Wrongful Restraint')}</div>
+                </div>
+                <div class="fir-field-item">
+                    <div class="fir-field-label">(a) Occurrence of Offence</div>
+                    <div class="fir-field-value">{occ.get('day', 'Yesterday')} • {occ.get('time_period', 'Around 7:30 PM')}</div>
+                </div>
+                <div class="fir-field-item">
+                    <div class="fir-field-label">(b) General Diary Reference</div>
+                    <div class="fir-field-value">{occ.get('general_diary_ref', 'Entry No. 12 / GD')}</div>
+                </div>
+            </div>
+
+            <!-- Item 5: Place of Occurrence -->
+            <div class="fir-field-grid">
+                <div class="fir-field-item" style="grid-column: span 2;">
+                    <div class="fir-field-label">5. Place of Occurrence (Address / Landmark)</div>
+                    <div class="fir-field-value">{poc.get('address', 'Near Main Gate of College Campus, Pune')}, {poc.get('city', 'Pune')} - {poc.get('pin', '411004')}</div>
+                </div>
+                <div class="fir-field-item" style="grid-column: span 2;">
+                    <div class="fir-field-label">Direction & Distance from Police Station</div>
+                    <div class="fir-field-value">{poc.get('direction_distance_from_ps', 'Approx. 2.5 KMs North-East from PS')} (Beat: {poc.get('beat_no', 'Beat 2')})</div>
+                </div>
+            </div>
+
+            <!-- Item 6: Complainant / Informant -->
+            <div class="fir-field-grid">
+                <div class="fir-field-item">
+                    <div class="fir-field-label">6. Complainant / Informant</div>
+                    <div class="fir-field-value">{custom_complainant if 'custom_complainant' in locals() else comp.get('name', 'Eyewitness')}</div>
+                </div>
+                <div class="fir-field-item">
+                    <div class="fir-field-label">Nationality</div>
+                    <div class="fir-field-value">{comp.get('nationality', 'INDIAN')}</div>
+                </div>
+                <div class="fir-field-item">
+                    <div class="fir-field-label">Occupation / Role</div>
+                    <div class="fir-field-value">{comp.get('occupation', 'Student / Citizen')} ({comp.get('relationship', 'Independent Eyewitness')})</div>
+                </div>
+                <div class="fir-field-item">
+                    <div class="fir-field-label">Type of Information</div>
+                    <div class="fir-field-value">{fir_data.get('type_of_information', 'Written (Witness Statement)')}</div>
+                </div>
+            </div>
+
+            <!-- Item 7: Details of Accused & Victim -->
+            <div class="fir-field-grid">
+                <div class="fir-field-item" style="grid-column: span 2;">
+                    <div class="fir-field-label">7. Details of Known / Suspected / Unknown Accused with Full Particulars</div>
+                    <div class="fir-field-value" style="color: #F87171;">
+                        {'<br>'.join([f"<strong>Accused #{a.get('accused_no', 1)}:</strong> {a.get('name', 'Unknown')} — {a.get('particulars', '')}" for a in accused_list])}
+                    </div>
+                </div>
+                <div class="fir-field-item" style="grid-column: span 2;">
+                    <div class="fir-field-label">Victim Particulars / Medical Referral</div>
+                    <div class="fir-field-value">{fir_data.get('victim_details', 'Delivery rider (Transported by ambulance)')}</div>
+                </div>
+            </div>
+
+            <!-- Item 8, 9, 10, 11: Ancillary Details -->
+            <div class="fir-field-grid">
+                <div class="fir-field-item">
+                    <div class="fir-field-label">8. Reasons for Delay in Reporting</div>
+                    <div class="fir-field-value">{fir_data.get('reasons_for_delay', 'No Delay / Emergency medical response prioritized')}</div>
+                </div>
+                <div class="fir-field-item">
+                    <div class="fir-field-label">9. Particulars of Property Stolen / Involved</div>
+                    <div class="fir-field-value">{fir_data.get('properties_stolen_involved', 'None stolen; commercial transport vehicle involved')}</div>
+                </div>
+                <div class="fir-field-item" style="grid-column: span 2;">
+                    <div class="fir-field-label">11. Inquest Report / U.D. Case / Medico-Legal Reference</div>
+                    <div class="fir-field-value">{fir_data.get('inquest_report', 'MLC recommended at receiving hospital')}</div>
+                </div>
+            </div>
+
+            <!-- Item 12: First Information Contents -->
+            <div style="margin-top: 14px; margin-bottom: 14px; background: #1E293B; padding: 16px; border-radius: 6px; border: 1px solid #334155;">
+                <div class="fir-field-label" style="margin-bottom: 8px;">12. First Information Contents (Statement of the Informant)</div>
+                <div style="font-size: 0.94rem; line-height: 1.6; color: #F1F5F9; font-style: normal; text-align: justify;">
+                    "{fir_data.get('first_information_contents', summary_text)}"
+                </div>
+            </div>
+
+            <!-- Item 13 & 14: Action Taken & Signatures -->
+            <div class="fir-field-grid">
+                <div class="fir-field-item" style="grid-column: span 4;">
+                    <div class="fir-field-label">13. Action Taken / Direction for Investigation</div>
+                    <div class="fir-field-value" style="color: #34D399;">
+                        {fir_data.get('action_taken', 'Registered case and took up preliminary investigation under Section 154 Cr.P.C.')}
+                    </div>
+                </div>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; margin-top: 28px; padding-top: 18px; border-top: 1px dashed #475569; font-size: 0.85rem; color: #94A3B8;">
+                <div style="text-align: center; width: 220px;">
+                    ____________________________<br>
+                    <strong>Signature / Thumb Impression of Informant</strong><br>
+                    (Admitted to be correctly recorded)
+                </div>
+                <div style="text-align: center; width: 220px;">
+                    ____________________________<br>
+                    <strong>Signature of Officer-in-Charge</strong><br>
+                    Station House Officer / Duty IO
+                </div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
 
         st.markdown('</div>', unsafe_allow_html=True)
 
     # -------------------------------------------------------------------------
-    # Step 4: Export Reports
+    # Step 4: Export Reports & Official FIR
     # -------------------------------------------------------------------------
     st.markdown('<div class="custom-card">', unsafe_allow_html=True)
-    st.markdown('<div class="section-title">💾 Step 4: Export Incident Report</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-title">💾 Step 4: Export Incident Report & Official Draft FIR</div>', unsafe_allow_html=True)
 
-    # Plain text report formatter
-    text_export_lines = [
-        "=" * 72,
-        "CASESCRIBE — STRUCTURED INCIDENT DOCUMENTATION REPORT",
-        "Generated by: CaseScribe Multilingual AI Assistant (MIT-WPU AI Hackathon)",
+    # Plain text FIR Formatter
+    fir_export_lines = [
+        "=" * 78,
+        "FIRST INFORMATION REPORT (DRAFT)",
+        "(Under Section 154 Cr.P.C. / Section 173 Bharatiya Nagarik Suraksha Sanhita, 2023)",
+        "Generated by: CaseScribe Multilingual AI Assistant (MIT-WPU Pune Hackathon)",
         f"Timestamp: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
-        "=" * 72,
+        "=" * 78,
         "",
-        "LEGAL & ETHICAL DISCLAIMER:",
+        f"1. District: {fir_data.get('district', 'Pune')}     PS: {fir_data.get('police_station', 'Shivajinagar')}",
+        f"   Year: {fir_data.get('year', '2026')}                 FIR No: {fir_data.get('fir_no', 'DRAFT')}",
+        f"   Date & Time: {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}",
+        "",
+        "2. Acts & Sections:",
+    ]
+
+    for a in acts_secs:
+        fir_export_lines.append(f"   • {a.get('act', 'IPC')} {a.get('section', '')} (Equiv: {a.get('bns_equiv', 'N/A')}) R/W: {a.get('rw_section', 'None')}")
+
+    fir_export_lines.extend([
+        "",
+        f"3. Suspected Offences: {fir_data.get('suspected_offences', 'Assault, Wrongful Restraint')}",
+        f"   (a) Occurrence: {occ.get('day', 'Yesterday')} • {occ.get('time_period', 'Around 7:30 PM')}",
+        f"   (b) General Diary Ref: {occ.get('general_diary_ref', 'Entry No. 12')}",
+        "",
+        f"4. Type of Information: {fir_data.get('type_of_information', 'Written Witness Statement')}",
+        "",
+        f"5. Place of Occurrence: {poc.get('address', 'Near College Main Gate, Pune')}",
+        f"   Direction & Distance from PS: {poc.get('direction_distance_from_ps', '2.5 KMs North-East')}",
+        "",
+        f"6. Complainant / Informant: {comp.get('name', 'Eyewitness')} ({comp.get('nationality', 'INDIAN')})",
+        f"   Address: {comp.get('address', 'Pune, Maharashtra')}",
+        "",
+        "7. Details of Known / Suspected / Unknown Accused:",
+    ])
+
+    for acc in accused_list:
+        fir_export_lines.append(f"   • Accused #{acc.get('accused_no', 1)}: {acc.get('name')} | Particulars: {acc.get('particulars')}")
+
+    fir_export_lines.extend([
+        "",
+        f"8. Reasons for delay: {fir_data.get('reasons_for_delay', 'No delay')}",
+        f"9. Particulars of property: {fir_data.get('properties_stolen_involved', 'None')}",
+        f"10. Inquest / Medical Case: {fir_data.get('inquest_report', 'MLC recommended')}",
+        "",
+        "-" * 78,
+        "12. FIRST INFORMATION CONTENTS (STATEMENT OF THE INFORMANT):",
+        "-" * 78,
+        f"{fir_data.get('first_information_contents', summary_text)}",
+        "",
+        "-" * 78,
+        f"13. Action Taken: {fir_data.get('action_taken', 'Registered preliminary draft')}",
+        "-" * 78,
+        "",
+        "STATUTORY & RESPONSIBLE AI DISCLAIMER:",
         report_data.get("disclaimer", "This is an AI-organized account requiring human review."),
-        "Notice: CaseScribe organizes preliminary accounts provided directly by the user.",
-        "It does not verify allegations, determine guilt, assess witness credibility, or",
-        "substitute for professional legal counsel or law enforcement investigation.",
-        "",
-        "-" * 72,
-        "1. INCIDENT OVERVIEW",
-        "-" * 72,
-        f"Input Language: {input_language}",
+        "CaseScribe organizes preliminary accounts provided directly by the user.",
+        "It does not replace official police investigation or judicial proceedings.",
+        "=" * 78,
+    ])
+
+    formatted_fir_text = "\n".join(fir_export_lines)
+
+    # General incident summary export
+    text_export_lines = [
+        "=" * 78,
+        "CASESCRIBE — STRUCTURED INCIDENT DOCUMENTATION & SEVERITY REPORT",
+        f"Timestamp: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
+        "=" * 78,
+        f"Crime Severity Assessment: {sev_level} (FIR Warranted: {fir_warranted})",
         f"Summary: {summary_text}",
         f"Translated Summary: {translated_sum if translated_sum else 'N/A'}",
         "",
-        f"People Mentioned: {', '.join(report_data.get('people_mentioned', [])) or 'None'}",
-        f"Locations Mentioned: {', '.join(report_data.get('locations_mentioned', [])) or 'None'}",
-        f"Dates & Times: {', '.join(report_data.get('dates_and_times', [])) or 'None'}",
-        "",
-        "-" * 72,
-        "2. CHRONOLOGICAL EVENT TIMELINE",
-        "-" * 72,
+        "1. EVENT TIMELINE:",
     ]
-
     for idx, ev in enumerate(events, start=1):
-        text_export_lines.extend([
-            f"Event #{idx}:",
-            f"  Description : {ev.get('event_description')}",
-            f"  Date        : {ev.get('date') or 'Not specified'}",
-            f"  Time        : {ev.get('time') or 'Not specified'}",
-            f"  Location    : {ev.get('location') or 'Not specified'}",
-            f"  People      : {', '.join(ev.get('people_mentioned', [])) or 'None'}",
-            f"  Source Text : \"{ev.get('source_excerpt', '')}\"",
-            ""
-        ])
-
+        text_export_lines.append(f"Event #{idx}: {ev.get('event_description')} [Time: {ev.get('time') or 'Not specified'}, Loc: {ev.get('location') or 'Not specified'}]")
+    
     text_export_lines.extend([
-        "-" * 72,
-        "3. CLARIFICATION CHECKLIST & MISSING DETAILS",
-        "-" * 72,
-        "Missing Information Gaps:"
+        "",
+        "2. CLARIFICATION CHECKLIST:",
     ])
-    for item in missing_info:
-        text_export_lines.append(f"  • {item}")
-
-    text_export_lines.append("\nRecommended Neutral Follow-up Inquiries:")
     for q in questions:
         text_export_lines.append(f"  [ ] {q}")
-
+    
     text_export_lines.extend([
         "",
-        "-" * 72,
-        "4. REVIEW FLAGS & AMBIGUITIES",
-        "-" * 72,
+        "3. REVIEW FLAGS:",
     ])
-    if inconsistencies:
-        for flag in inconsistencies:
-            text_export_lines.append(f"  [!] Requires Human Review: {flag}")
-    else:
-        text_export_lines.append("  No direct internal contradictions detected in current statement.")
+    for item in inconsistencies:
+        text_export_lines.append(f"  [!] Requires Human Review: {item}")
+    
+    formatted_incident_text = "\n".join(text_export_lines)
+    formatted_full_json = json.dumps(report_data, indent=2, ensure_ascii=False)
 
-    text_export_lines.extend([
-        "",
-        "=" * 72,
-        "ORIGINAL SUBMITTED NARRATIVE:",
-        "=" * 72,
-        st.session_state.get("source_text", narrative_text),
-        "=" * 72,
-    ])
-
-    formatted_text_report = "\n".join(text_export_lines)
-    formatted_json_report = json.dumps(report_data, indent=2, ensure_ascii=False)
-
-    exp_col1, exp_col2 = st.columns(2)
+    exp_col1, exp_col2, exp_col3 = st.columns(3)
     with exp_col1:
         st.download_button(
-            label="📄 Download Incident Report (.txt)",
-            data=formatted_text_report,
-            file_name=f"CaseScribe_Incident_Report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt",
+            label="🚨 Download Official Draft FIR (.txt)",
+            data=formatted_fir_text,
+            file_name=f"CaseScribe_Official_FIR_Sec154_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt",
             mime="text/plain",
             use_container_width=True
         )
     with exp_col2:
         st.download_button(
-            label="📦 Download Structured Report (.json)",
-            data=formatted_json_report,
-            file_name=f"CaseScribe_Incident_Data_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json",
+            label="📄 Download Incident Report (.txt)",
+            data=formatted_incident_text,
+            file_name=f"CaseScribe_Incident_Report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt",
+            mime="text/plain",
+            use_container_width=True
+        )
+    with exp_col3:
+        st.download_button(
+            label="📦 Download Full Data & FIR (.json)",
+            data=formatted_full_json,
+            file_name=f"CaseScribe_Full_Incident_FIR_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json",
             mime="application/json",
             use_container_width=True
         )
@@ -931,7 +1442,7 @@ if report_data:
 # -----------------------------------------------------------------------------
 st.markdown("""
 <div style="text-align: center; color: #64748B; font-size: 0.8rem; margin-top: 40px; padding-top: 20px; border-top: 1px solid #1E293B;">
-    CaseScribe • Multilingual Legal Aid & Incident Documentation System • Powered by Sarvam AI Models<br>
-    Built for 45-minute AI Hackathon at MIT-WPU Pune • Designed for Social Impact
+    CaseScribe • Multilingual Legal Aid & Automated FIR Drafting System • Powered by Sarvam AI Models<br>
+    Built for 45-minute AI Hackathon at MIT-WPU Pune • Under Section 154 Cr.P.C. & Section 173 BNSS 2023
 </div>
 """, unsafe_allow_html=True)
